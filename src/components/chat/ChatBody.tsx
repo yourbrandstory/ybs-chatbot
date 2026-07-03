@@ -34,6 +34,7 @@ export default function ChatBody({
   onLeadSubmit,
   initialChips,
   onChipSelect,
+  dynamicChips,
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
