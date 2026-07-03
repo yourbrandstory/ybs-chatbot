@@ -350,6 +350,37 @@
   width: 20px;
   text-align: right;
 }
+.q-pill {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 8px;
+  border: 1px solid;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.q-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  margin-bottom: 6px;
+  border-radius: 10px;
+  background: var(--plum-xs);
+  border: 1px solid var(--plum-lt);
+  font-size: 12px;
+  color: var(--ink);
+  line-height: 1.5;
+}
+.q-callout i {
+  font-size: 18px;
+  color: var(--gold);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.q-callout strong {
+  font-weight: 600;
+}
 
 /* Full panel (leads table) */
 .full-panel {

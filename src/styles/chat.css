@@ -479,51 +479,50 @@
 }
 
 /* =========================================================
-   Quick chips — dynamic, staggered entrance
+   Quick chips — redesigned: 2-row wrap, dots, entrance, focus-hide
    ========================================================= */
+.chips-section {
+  padding: 12px 28px;
+  background: var(--paper);
+  border-top: 1px solid var(--rule);
+}
+.chips-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--mist);
+  margin-bottom: 8px;
+}
 .chips-row {
   display: flex;
-  gap: 6px;
   flex-wrap: wrap;
-  padding: 0 22px 14px;
+  gap: 8px;
 }
 .q-chip {
-  padding: 7px 16px;
+  padding: 8px 16px;
   border-radius: 20px;
   border: 1px solid var(--rule);
   background: #fff;
-  color: var(--mist);
-  font-size: 12px;
+  color: var(--ink);
+  font-size: 13px;
+  font-family: var(--sans);
   cursor: pointer;
   transition: all 0.18s ease;
-  font-family: inherit;
-  position: relative;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   opacity: 0;
-  animation: chipsIn 0.2s ease forwards;
+  animation: chipIn 0.2s ease forwards;
 }
-.q-chip:nth-child(1) {
-  animation-delay: 0s;
-}
-.q-chip:nth-child(2) {
-  animation-delay: 0.06s;
-}
-.q-chip:nth-child(3) {
-  animation-delay: 0.12s;
-}
-.q-chip:nth-child(4) {
-  animation-delay: 0.18s;
-}
-.q-chip:nth-child(5) {
-  animation-delay: 0.24s;
-}
-@keyframes chipsIn {
+@keyframes chipIn {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(5px) scale(0.96);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 .q-chip:hover {
@@ -531,13 +530,82 @@
   border-color: var(--plum-lt);
   color: var(--plum);
   transform: translateY(-1px);
+  box-shadow: 0 3px 12px rgba(59, 31, 78, 0.1);
 }
 .q-chip:active {
-  transform: scale(0.97);
+  transform: scale(0.97) translateY(0);
+  transition: transform 0.1s;
 }
-.q-chip:hover::after {
-  content: " →";
-  font-size: 11px;
+.chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+/* Intro section chips (inside chat body) */
+.intro-divider {
+  width: 60px;
+  height: 1px;
+  background: var(--rule);
+  margin: 18px auto 14px;
+}
+.intro-chips-label {
+  font-size: 12px;
+  color: var(--mist);
+  margin-bottom: 12px;
+}
+.intro .chips-section {
+  padding: 0;
+  border-top: none;
+  max-height: none;
+  background: transparent;
+}
+
+/* =========================================================
+   Inline chips — below last bot message (like quick replies)
+   ========================================================= */
+.inline-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px 0 4px 38px;
+}
+.inline-chip {
+  padding: 7px 16px;
+  border-radius: 18px;
+  border: 1px solid var(--rule);
+  background: #fff;
+  color: var(--ink);
+  font-size: 13px;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+  opacity: 0;
+  animation: inlineChipIn 0.2s ease forwards;
+}
+@keyframes inlineChipIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.inline-chip:hover {
+  background: var(--plum-xs);
+  border-color: var(--plum-lt);
+  color: var(--plum);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 12px rgba(59, 31, 78, 0.1);
+}
+.inline-chip:active {
+  transform: scale(0.97) translateY(0);
+  transition: transform 0.1s;
 }
 
 /* =========================================================

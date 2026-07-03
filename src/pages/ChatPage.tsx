@@ -2,10 +2,10 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 import { sendToGroq, type Message } from "../lib/groq";
 import { getTemperature, detectLeadCaptureTrigger } from "../lib/utils";
+import type { ChipItem } from "../components/chat/QuickChips";
 import ChatSidebar from "../components/chat/ChatSidebar";
 import ChatHeader from "../components/chat/ChatHeader";
 import ChatBody from "../components/chat/ChatBody";
-import QuickChips from "../components/chat/QuickChips";
 import ChatInput from "../components/chat/ChatInput";
 
 const DEFAULT_SYSTEM_PROMPT = `You are the YBS Assistant — the friendly face of TeamMap, a task and project management tool built for small agencies and growing teams (3–15 people).
@@ -46,11 +46,19 @@ After 4–5 exchanges OR when user shows clear interest (asks about pricing, dem
 "I'd love to show you this live — it's 20 minutes and we tailor it to your team exactly. Can I grab your name and email to book it in?
 [CHIPS: Yes, book me in | Tell me more first | What's the cost?]"`;
 
-const INITIAL_CHIPS = [
-  "Tell me about TeamMap",
-  "Show me how tasks work",
-  "What team size is this for?",
-  "Can I see a demo?",
+const INITIAL_CHIPS: ChipItem[] = [
+  { text: "We use WhatsApp + sheets", category: "pain" },
+  { text: "Client deadlines keep slipping", category: "pain" },
+  { text: "No visibility across the team", category: "pain" },
+  { text: "I'm in status meetings all day", category: "pain" },
+  { text: "Too many tools, nothing connects", category: "pain" },
+  { text: "We're growing fast, things are breaking", category: "pain" },
+  { text: "I manage 5–10 clients at once", category: "team" },
+  { text: "Team doesn't know what's priority", category: "team" },
+  { text: "Can I see a demo?", category: "disco" },
+  { text: "What makes this different?", category: "disco" },
+  { text: "How does task assignment work?", category: "disco" },
+  { text: "What does it cost?", category: "disco" },
 ];
 
 const personaOpeners: Record<string, string> = {
@@ -82,7 +90,7 @@ export default function ChatPage() {
   const [leadShown, setLeadShown] = useState(false);
   const [leadCaptured, setLeadCaptured] = useState(false);
   const [systemPrompt, setSystemPrompt] = useState(DEFAULT_SYSTEM_PROMPT);
-  const [dynamicChips, setDynamicChips] = useState<string[]>(INITIAL_CHIPS);
+  const [dynamicChips, setDynamicChips] = useState<string[]>([]);
 
   useEffect(() => {
     let sid = localStorage.getItem("ybs_session_id");
@@ -114,6 +122,8 @@ export default function ChatPage() {
 
   const sendMessage = useCallback(
     async (text: string) => {
+      setDynamicChips([]);
+
       const userMsg: Message = { role: "user", content: text };
       setMessages((prev) => [...prev, userMsg]);
       setIsTyping(true);
@@ -136,8 +146,6 @@ export default function ChatPage() {
 
         if (chips.length > 0) {
           setDynamicChips(chips);
-        } else {
-          setDynamicChips([]);
         }
 
         if (conversationId) {
@@ -212,7 +220,7 @@ export default function ChatPage() {
     sendMessage("Thanks! I've shared my contact details for the walkthrough.");
   }
 
-  const showChips = messages.length === 0;
+  const showIntro = messages.length === 0;
 
   return (
     <div className="ybs-layout">
@@ -226,13 +234,10 @@ export default function ChatPage() {
           leadShown={leadShown}
           onPersonaSelect={handlePersonaSelect}
           onLeadSubmit={handleLeadSubmit}
+          initialChips={showIntro ? INITIAL_CHIPS : undefined}
+          onChipSelect={sendMessage}
+          dynamicChips={dynamicChips}
         />
-        {showChips && dynamicChips.length > 0 && (
-          <QuickChips chips={dynamicChips} onSelect={sendMessage} />
-        )}
-        {!showChips && dynamicChips.length > 0 && (
-          <QuickChips chips={dynamicChips} onSelect={sendMessage} />
-        )}
         <ChatInput onSend={sendMessage} disabled={isTyping} />
       </div>
     </div>

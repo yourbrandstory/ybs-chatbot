@@ -1,9 +1,11 @@
 import { useEffect, useRef } from "react";
 import type { Message } from "../../lib/groq";
+import type { ChipItem } from "./QuickChips";
 import MessageBubble from "./MessageBubble";
 import PersonaCards from "./PersonaCards";
 import TypingIndicator from "./TypingIndicator";
 import LeadFormCard from "./LeadFormCard";
+import QuickChips from "./QuickChips";
 
 interface Props {
   messages: Message[];
@@ -18,6 +20,9 @@ interface Props {
     team_size: string;
     current_tools: string;
   }) => void;
+  initialChips?: ChipItem[];
+  onChipSelect?: (text: string) => void;
+  dynamicChips?: string[];
 }
 
 export default function ChatBody({
@@ -27,6 +32,8 @@ export default function ChatBody({
   leadShown,
   onPersonaSelect,
   onLeadSubmit,
+  initialChips,
+  onChipSelect,
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -49,6 +56,14 @@ export default function ChatBody({
             workflow problem.
           </p>
           <PersonaCards onSelect={onPersonaSelect} disabled={personaSelected} />
+
+          {initialChips && initialChips.length > 0 && (
+            <>
+              <div className="intro-divider" />
+              <div className="intro-chips-label">Or jump straight in:</div>
+              <QuickChips chips={initialChips} onSelect={onChipSelect || (() => {})} />
+            </>
+          )}
         </div>
       )}
 
@@ -58,6 +73,21 @@ export default function ChatBody({
       })}
 
       {isTyping && <TypingIndicator />}
+
+      {dynamicChips && dynamicChips.length > 0 && (
+        <div className="inline-chips">
+          {dynamicChips.map((chip, i) => (
+            <button
+              key={i}
+              className="inline-chip"
+              onClick={() => onChipSelect?.(chip)}
+              style={{ animationDelay: `${i * 0.05}s` }}
+            >
+              {chip}
+            </button>
+          ))}
+        </div>
+      )}
 
       {leadShown && <LeadFormCard onSubmit={onLeadSubmit} />}
     </div>

@@ -3,9 +3,10 @@ import { useState } from "react";
 interface Props {
   onSend: (text: string) => void;
   disabled?: boolean;
+  onFocusChange?: (focused: boolean) => void;
 }
 
-export default function ChatInput({ onSend, disabled }: Props) {
+export default function ChatInput({ onSend, disabled, onFocusChange }: Props) {
   const [value, setValue] = useState("");
 
   function handleSend() {
@@ -26,6 +27,8 @@ export default function ChatInput({ onSend, disabled }: Props) {
           onKeyDown={(e) => {
             if (e.key === "Enter") handleSend();
           }}
+          onFocus={() => onFocusChange?.(true)}
+          onBlur={() => onFocusChange?.(false)}
           disabled={disabled}
         />
         <button

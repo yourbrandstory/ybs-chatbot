@@ -38,7 +38,7 @@ const personaLabel: Record<string, string> = {
 export default function DashboardView({ onOpenConversation }: Props) {
   const [conversations, setConversations] = useState<ConvRow[]>([]);
   const [leads, setLeads] = useState<LeadRow[]>([]);
-  const [messages, setMessages] = useState<{ content: string }[]>([]);
+  const [messages, setMessages] = useState<{ id: string; content: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -54,7 +54,12 @@ export default function DashboardView({ onOpenConversation }: Props) {
         .select("*")
         .order("created_at", { ascending: false });
 
-      const { data: msgs } = await supabase.from("messages").select("content").eq("role", "user");
+      const { data: msgs } = await supabase
+        .from("messages")
+        .select("id, content")
+        .eq("role", "user")
+        .order("created_at", { ascending: false })
+        .limit(50);
 
       if (convs) setConversations(convs as ConvRow[]);
       if (lds) setLeads(lds as LeadRow[]);
@@ -80,29 +85,67 @@ export default function DashboardView({ onOpenConversation }: Props) {
       ? (conversations.reduce((s, c) => s + c.message_count, 0) / conversations.length).toFixed(1)
       : "0";
 
-  // Top queries
-  const clusters: Record<string, string[]> = {
-    pricing: ["cost", "price", "pricing", "how much"],
-    demo: ["demo", "walkthrough", "see it", "show me"],
-    task: ["task", "assign", "assignment"],
-    team: ["team size", "how many", "people"],
-    feature: ["milestone", "calendar", "track"],
+  // Query categorization
+  type QueryCategory =
+    | "Task system"
+    | "Client tracking"
+    | "Milestones"
+    | "SM Calendar"
+    | "Pricing"
+    | "Demo request"
+    | "Team setup"
+    | "General";
+
+  const categoryInfo: Record<QueryCategory, { keywords: string[]; cls: string; color: string }> = {
+    "Task system": {
+      keywords: ["task", "assign", "assignment", "dashboard", "column", "priority"],
+      cls: "task",
+      color: "#3B1F4E",
+    },
+    "Client tracking": {
+      keywords: ["client", "customer", "account", "tracking"],
+      cls: "client",
+      color: "#2563EB",
+    },
+    Milestones: {
+      keywords: ["milestone", "goal", "progress", "completion"],
+      cls: "milestone",
+      color: "#16A34A",
+    },
+    "SM Calendar": {
+      keywords: ["social media", "calendar", "content", "posting", "schedule"],
+      cls: "sm-cal",
+      color: "#B8860B",
+    },
+    Pricing: {
+      keywords: ["cost", "price", "pricing", "how much", "budget", "plan", "pay"],
+      cls: "pricing",
+      color: "#C2410C",
+    },
+    "Demo request": {
+      keywords: ["demo", "walkthrough", "see it", "show me", "book", "tour"],
+      cls: "demo",
+      color: "#7C3AED",
+    },
+    "Team setup": {
+      keywords: ["team size", "how many", "people", "onboarding", "setup", "growing"],
+      cls: "team",
+      color: "#0891B2",
+    },
+    General: { keywords: [], cls: "general", color: "#6B7280" },
   };
-  const counts: Record<string, number> = {};
-  for (const [key, keywords] of Object.entries(clusters)) {
-    counts[key] = messages.filter((m) =>
-      keywords.some((kw) => m.content.toLowerCase().includes(kw)),
-    ).length;
+
+  function categorize(text: string): QueryCategory {
+    const lower = text.toLowerCase();
+    for (const [cat, info] of Object.entries(categoryInfo) as [
+      QueryCategory,
+      (typeof categoryInfo)["Task system"],
+    ][]) {
+      if (cat === "General") continue;
+      if (info.keywords.some((kw) => lower.includes(kw))) return cat;
+    }
+    return "General";
   }
-  const maxCount = Math.max(...Object.values(counts), 1);
-  const topQueries = Object.entries(counts)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5)
-    .map(([key, count]) => ({
-      text: key.charAt(0).toUpperCase() + key.slice(1),
-      count,
-      pct: Math.round((count / maxCount) * 100),
-    }));
 
   return (
     <>
@@ -158,19 +201,42 @@ export default function DashboardView({ onOpenConversation }: Props) {
 
         <div className="panel">
           <div className="panel-t">
-            Top queries <span>All time</span>
+            What people are asking about TeamMap
+            <span>Use this data to improve the system prompt</span>
           </div>
-          {topQueries.map((q, i) => (
-            <div className="q-item" key={q.text}>
-              <div className="q-rank">{i + 1}</div>
-              <div className="q-text">{q.text}</div>
-              <div className="q-bar-w">
-                <div className="q-bar" style={{ width: `${q.pct}%` }} />
-              </div>
-              <div className="q-n">{q.count}</div>
+
+          <div className="q-callout">
+            <i className="ti ti-bulb" />
+            <div>
+              <strong>Real visitor questions</strong> — these are actual questions visitors are
+              asking the chatbot. Review them regularly and update the system prompt in{" "}
+              <strong>Settings</strong> to improve accuracy and relevance.
             </div>
-          ))}
-          {topQueries.length === 0 && (
+          </div>
+
+          {messages.map((m, i) => {
+            const cat = categorize(m.content);
+            const info = categoryInfo[cat];
+            return (
+              <div className="q-item" key={m.id}>
+                <div className="q-rank">{i + 1}</div>
+                <div className="q-text">
+                  {m.content.length > 70 ? m.content.slice(0, 70) + "…" : m.content}
+                </div>
+                <span
+                  className="q-pill"
+                  style={{
+                    background: `${info.color}22`,
+                    color: info.color,
+                    borderColor: `${info.color}44`,
+                  }}
+                >
+                  {cat}
+                </span>
+              </div>
+            );
+          })}
+          {messages.length === 0 && (
             <p style={{ color: "var(--mist)", fontSize: 12 }}>No messages yet.</p>
           )}
         </div>
