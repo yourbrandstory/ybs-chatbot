@@ -15,7 +15,7 @@ const dotColors: Record<string, string> = {
   disco: "#B8860B",
 };
 
-export default function QuickChips({ chips, onSelect, inputFocused, showLabel }: Props) {
+export default function QuickChips({ chips, onSelect, showLabel }: Props) {
   if (!chips || chips.length === 0) return null;
 
   return (

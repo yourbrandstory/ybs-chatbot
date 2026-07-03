@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { sendToGroq, type Message } from "../lib/groq";
 import { getTemperature, detectLeadCaptureTrigger } from "../lib/utils";
@@ -7,6 +8,8 @@ import ChatSidebar from "../components/chat/ChatSidebar";
 import ChatHeader from "../components/chat/ChatHeader";
 import ChatBody from "../components/chat/ChatBody";
 import ChatInput from "../components/chat/ChatInput";
+import MobileTopBar from "../components/MobileTopBar";
+import BottomSheet from "../components/BottomSheet";
 
 const DEFAULT_SYSTEM_PROMPT = `You are the YBS Assistant — the friendly face of TeamMap, a task and project management tool built for small agencies and growing teams (3–15 people).
 
@@ -91,6 +94,7 @@ export default function ChatPage() {
   const [leadCaptured, setLeadCaptured] = useState(false);
   const [systemPrompt, setSystemPrompt] = useState(DEFAULT_SYSTEM_PROMPT);
   const [dynamicChips, setDynamicChips] = useState<string[]>([]);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   useEffect(() => {
     let sid = localStorage.getItem("ybs_session_id");
@@ -200,18 +204,16 @@ export default function ChatPage() {
     current_tools: string;
   }) {
     if (!conversationId) return;
-    await supabase
-      .from("leads")
-      .insert({
-        conversation_id: conversationId,
-        name: data.name,
-        email: data.email,
-        phone: data.phone || null,
-        team_size: data.team_size || null,
-        current_tools: data.current_tools || null,
-        persona_type: personaSelected,
-        temperature: "hot",
-      });
+    await supabase.from("leads").insert({
+      conversation_id: conversationId,
+      name: data.name,
+      email: data.email,
+      phone: data.phone || null,
+      team_size: data.team_size || null,
+      current_tools: data.current_tools || null,
+      persona_type: personaSelected,
+      temperature: "hot",
+    });
     await supabase
       .from("conversations")
       .update({ lead_captured: true, temperature: "hot" })
@@ -223,23 +225,36 @@ export default function ChatPage() {
   const showIntro = messages.length === 0;
 
   return (
-    <div className="ybs-layout">
-      <ChatSidebar />
-      <div className="chat-main">
-        <ChatHeader />
-        <ChatBody
-          messages={messages}
-          isTyping={isTyping}
-          personaSelected={!!personaSelected}
-          leadShown={leadShown}
-          onPersonaSelect={handlePersonaSelect}
-          onLeadSubmit={handleLeadSubmit}
-          initialChips={showIntro ? INITIAL_CHIPS : undefined}
-          onChipSelect={sendMessage}
-          dynamicChips={dynamicChips}
-        />
-        <ChatInput onSend={sendMessage} disabled={isTyping} />
+    <>
+      <MobileTopBar onMenuClick={() => setSheetOpen(true)} />
+      <div className="ybs-layout">
+        <ChatSidebar />
+        <div className="chat-main">
+          <ChatHeader />
+          <ChatBody
+            messages={messages}
+            isTyping={isTyping}
+            personaSelected={!!personaSelected}
+            leadShown={leadShown}
+            onPersonaSelect={handlePersonaSelect}
+            onLeadSubmit={handleLeadSubmit}
+            initialChips={showIntro ? INITIAL_CHIPS : undefined}
+            onChipSelect={sendMessage}
+            dynamicChips={dynamicChips}
+          />
+          <ChatInput onSend={sendMessage} disabled={isTyping} />
+        </div>
       </div>
-    </div>
+      <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)}>
+        <nav className="sheet-nav">
+          <Link to="/chat" className="sheet-nav-item on" onClick={() => setSheetOpen(false)}>
+            <i className="ti ti-message" /> Chat assistant
+          </Link>
+          <Link to="/admin" className="sheet-nav-item" onClick={() => setSheetOpen(false)}>
+            <i className="ti ti-settings" /> Admin
+          </Link>
+        </nav>
+      </BottomSheet>
+    </>
   );
 }

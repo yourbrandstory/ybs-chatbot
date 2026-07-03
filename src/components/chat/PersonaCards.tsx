@@ -35,9 +35,11 @@ export default function PersonaCards({ onSelect, disabled }: Props) {
           <div className="p-icon">
             <i className={p.icon} aria-hidden="true" />
           </div>
-          <div className="p-role">{p.role}</div>
-          <div className="p-name">{p.name}</div>
-          <div className="p-desc">{p.desc}</div>
+          <div className="p-body">
+            <div className="p-role">{p.role}</div>
+            <div className="p-name">{p.name}</div>
+            <div className="p-desc">{p.desc}</div>
+          </div>
           <span className="p-card-arrow">→</span>
         </button>
       ))}

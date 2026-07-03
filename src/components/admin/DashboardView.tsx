@@ -246,41 +246,43 @@ export default function DashboardView({ onOpenConversation }: Props) {
         <div className="panel-t">
           Leads captured <span>Name · contact · persona · temperature</span>
         </div>
-        <table className="leads-t">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Persona</th>
-              <th>Temp</th>
-              <th>Msgs</th>
-              <th>When</th>
-            </tr>
-          </thead>
-          <tbody>
-            {leads.map((l) => (
-              <tr key={l.id}>
-                <td className="nm">{l.name}</td>
-                <td>{l.email}</td>
-                <td>
-                  <span className="p-tag">{personaLabel[l.persona_type] || l.persona_type}</span>
-                </td>
-                <td>
-                  <span className={`temp ${l.temperature}`}>{l.temperature}</span>
-                </td>
-                <td>{l.message_count || 0}</td>
-                <td>{timeAgo(l.created_at)}</td>
-              </tr>
-            ))}
-            {leads.length === 0 && (
+        <div className="leads-table-wrap">
+          <table className="leads-t">
+            <thead>
               <tr>
-                <td colSpan={6} style={{ color: "var(--mist)", fontSize: 12, padding: 10 }}>
-                  No leads yet.
-                </td>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Persona</th>
+                <th>Temp</th>
+                <th>Msgs</th>
+                <th>When</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {leads.map((l) => (
+                <tr key={l.id}>
+                  <td className="nm">{l.name}</td>
+                  <td>{l.email}</td>
+                  <td>
+                    <span className="p-tag">{personaLabel[l.persona_type] || l.persona_type}</span>
+                  </td>
+                  <td>
+                    <span className={`temp ${l.temperature}`}>{l.temperature}</span>
+                  </td>
+                  <td>{l.message_count || 0}</td>
+                  <td>{timeAgo(l.created_at)}</td>
+                </tr>
+              ))}
+              {leads.length === 0 && (
+                <tr>
+                  <td colSpan={6} style={{ color: "var(--mist)", fontSize: 12, padding: 10 }}>
+                    No leads yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
   );

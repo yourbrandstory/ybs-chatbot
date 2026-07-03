@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Message } from "../../lib/groq";
 import type { ChipItem } from "./QuickChips";
 import MessageBubble from "./MessageBubble";
@@ -37,10 +37,15 @@ export default function ChatBody({
   dynamicChips,
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
+  const [showAllChips, setShowAllChips] = useState(false);
 
   useEffect(() => {
     if (ref.current) ref.current.scrollTop = ref.current.scrollHeight;
   }, [messages, isTyping]);
+
+  useEffect(() => {
+    setShowAllChips(false);
+  }, [dynamicChips]);
 
   const showIntro = messages.length === 0;
 
@@ -77,7 +82,7 @@ export default function ChatBody({
 
       {dynamicChips && dynamicChips.length > 0 && (
         <div className="inline-chips">
-          {dynamicChips.map((chip, i) => (
+          {(showAllChips ? dynamicChips : dynamicChips.slice(0, 3)).map((chip, i) => (
             <button
               key={i}
               className="inline-chip"
@@ -87,6 +92,15 @@ export default function ChatBody({
               {chip}
             </button>
           ))}
+          {dynamicChips.length > 3 && !showAllChips && (
+            <button
+              className="inline-chip inline-chip-expand"
+              onClick={() => setShowAllChips(true)}
+              style={{ animationDelay: `${3 * 0.05}s` }}
+            >
+              +{dynamicChips.length - 3} more
+            </button>
+          )}
         </div>
       )}
 

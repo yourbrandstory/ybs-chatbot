@@ -548,3 +548,293 @@
   flex-direction: column;
   gap: 12px;
 }
+
+/* =========================================================
+   MOBILE RESPONSIVE — admin
+   ========================================================= */
+@media (max-width: 768px) {
+  .admin-layout {
+    padding-top: 52px;
+    padding-bottom: 72px;
+  }
+
+  .admin-main {
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  .admin-wrap {
+    padding: 16px 14px;
+  }
+
+  .admin-hd h2 {
+    font-size: 16px;
+  }
+
+  .admin-hd p {
+    font-size: 11px;
+  }
+
+  .time-badge {
+    font-size: 10px;
+    padding: 3px 10px;
+  }
+
+  /* Hide desktop nav, show mobile tab bar */
+  .admin-nav {
+    display: none;
+  }
+
+  /* Stats: 2×2 grid */
+  .stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .stat {
+    padding: 14px;
+  }
+
+  .stat-v {
+    font-size: 22px;
+  }
+
+  .stat-l {
+    font-size: 9px;
+  }
+
+  /* Panels: stack */
+  .panels {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .panel {
+    padding: 14px;
+  }
+
+  .panel-t {
+    font-size: 12px;
+  }
+
+  .full-panel {
+    padding: 14px;
+  }
+
+  /* Leads table — horizontal scroll */
+  .leads-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -4px;
+    padding: 0 4px;
+  }
+
+  .leads-table-wrap::before {
+    content: "← Scroll →";
+    display: block;
+    font-size: 10px;
+    color: var(--mist);
+    text-align: center;
+    margin-bottom: 6px;
+    opacity: 0.6;
+  }
+
+  .leads-t {
+    min-width: 500px;
+  }
+
+  .leads-t td,
+  .leads-t th {
+    white-space: nowrap;
+  }
+
+  .leads-t td {
+    padding: 8px 6px;
+  }
+
+  .conv {
+    padding: 6px 0;
+  }
+
+  .conv-mid {
+    min-width: 0;
+  }
+
+  .admin-signout {
+    display: none;
+  }
+
+  /* Settings */
+  .settings-block {
+    padding: 16px;
+  }
+
+  .settings-block textarea {
+    min-height: 120px;
+    font-size: 14px;
+  }
+
+  .save-b {
+    width: 100%;
+    padding: 12px;
+    font-size: 13px;
+    min-height: 44px;
+  }
+
+  .export-b {
+    width: 100%;
+    justify-content: center;
+    padding: 12px;
+    min-height: 44px;
+  }
+
+  /* Login */
+  .login-card {
+    max-width: 100%;
+    margin: 0 20px;
+    padding: 24px 20px;
+  }
+
+  .login-card input {
+    font-size: 16px;
+  }
+
+  .login-card button {
+    padding: 13px;
+    font-size: 14px;
+    min-height: 48px;
+  }
+
+  /* Conversation panel */
+  .side-panel {
+    width: 100%;
+  }
+
+  /* Query pills */
+  .q-pill {
+    font-size: 9px;
+    padding: 2px 6px;
+  }
+
+  .q-text {
+    font-size: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .q-callout {
+    font-size: 11px;
+    padding: 10px 12px;
+  }
+
+  .q-callout i {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-wrap {
+    padding: 12px 10px;
+    gap: 12px;
+  }
+
+  .stats {
+    gap: 8px;
+  }
+
+  .stat {
+    padding: 12px;
+  }
+
+  .stat-v {
+    font-size: 20px;
+  }
+
+  .stat .stat-s {
+    font-size: 10px;
+  }
+
+  .panel-t {
+    font-size: 11px;
+  }
+
+  .panel-t span {
+    font-size: 10px;
+  }
+
+  .conv-name {
+    font-size: 11px;
+  }
+
+  .conv-preview {
+    font-size: 10px;
+  }
+
+  .conv-av {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+
+  .leads-t td {
+    font-size: 10px;
+    padding: 6px 4px;
+  }
+
+  .leads-t th {
+    font-size: 9px;
+  }
+
+  .admin-tab {
+    font-size: 9px;
+  }
+
+  .admin-tab i {
+    font-size: 16px;
+  }
+
+  .settings-block textarea {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 360px) {
+  .admin-wrap {
+    padding: 10px 8px;
+  }
+
+  .stat-v {
+    font-size: 18px;
+  }
+
+  .stats {
+    gap: 6px;
+  }
+
+  .stat {
+    padding: 10px;
+  }
+
+  .panel {
+    padding: 10px;
+  }
+
+  .full-panel {
+    padding: 10px;
+  }
+
+  .q-item {
+    gap: 4px;
+    padding: 6px 0;
+  }
+
+  .q-rank {
+    width: 12px;
+    font-size: 10px;
+  }
+
+  .q-text {
+    font-size: 9px;
+  }
+}
